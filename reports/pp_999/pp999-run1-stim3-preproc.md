@@ -20,9 +20,6 @@ information on processing steps from Tobii. If I failed to cite any relevant
 sources please let me know!
 
 #Acknowledgements 
-
-
-
 This document makes use of the dplyr, ggplot, and cowplot packages.
 Many of the preprocessing steps are inspired by the Tobii documentation by 
 [Olsen, 2012](https://www.tobiipro.com/siteassets/tobii-pro/learn-and-support/analyze/how-do-we-classify-eye-movements/tobii-pro-i-vt-fixation-filter.pdf/?v=2012)
@@ -130,7 +127,7 @@ averageEye.Fun <- function(df){
 input <- averageEye.Fun(input)
 ```
 
-![](C:/Users/leonf/Dropbox/1.dataviz/eyetracking-analysis/reports/pp_999/pp999-run1-stim3-preproc_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
+https://github.com/LMFonville/eyetracking-analysis/blob/master/reports/pp_999/pp999-run1-stim1-preproc_files/figure-html/plotThresh-2.png
 
 
 Data contains 119 invalid datapoints (8.29%).
