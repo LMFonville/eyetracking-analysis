@@ -15,12 +15,7 @@
 library(dplyr)
 library(rmarkdown)
 # Let's load the datafile which contains all the trials
-if (!dir.exists("C:/Users/fonvill/")){
-  workDir <-  "C:/Users/leonf/Dropbox/1.dataviz/eyetracking-analysis/"
-} else{
-  workDir <-  "E:/1.Work/visual-imagery-clocktask/"
-  
-}
+workDir <-  "/path/to/eyetracking-analysis/"
 rawDF <- read.csv(paste0(workDir,"rawdata/", "exampleData.csv"), 
                   stringsAsFactors = FALSE, header = TRUE)
 pp = unique(rawDF$ppID)
