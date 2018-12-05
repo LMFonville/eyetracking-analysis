@@ -66,15 +66,3 @@ for (thisRun in 1:length(allRuns)){
 }
 
 #STEP 5: CHECK FOR THE FILES IN YOUR SPECIFIED FOLDER
-
-# PART 2: SIMILARITY ANALYSIS
-
-# Load preprocessed files per run and match stimulus and imagery trials
-inputFiles <- list.files(path = preprocDir, pattern = "run1")
-input1 <- read.csv(paste0(preprocPath, inputFiles[1]), stringsAsFactors = F, header = T)
-input2 <- read.csv(paste0(preprocPath, inputFiles[2]), stringsAsFactors = F, header = T)
-#reportDir = paste0(dataDir, "reports/pp_", pp)
-rmarkdown::render(input = paste0(workDir, "code/similarity.R"),
-                  output_file = 'ts_tmp.html', output_dir = reportDir,
-                  clean = TRUE)
-
