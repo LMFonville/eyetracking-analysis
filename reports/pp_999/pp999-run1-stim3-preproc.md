@@ -127,7 +127,7 @@ averageEye.Fun <- function(df){
 input <- averageEye.Fun(input)
 ```
 
-https://github.com/LMFonville/eyetracking-analysis/blob/master/reports/pp_999/pp999-run1-stim1-preproc_files/figure-html/plotThresh-2.png
+<https://github.com/LMFonville/eyetracking-analysis/blob/master/reports/pp_999/pp999-run1-stim1-preproc_files/figure-html/plotThresh-2.png>
 
 
 Data contains 119 invalid datapoints (8.29%).
