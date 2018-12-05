@@ -31,7 +31,7 @@ if (!dir.exists(preprocDir)){
   dir.create(preprocDir)
 }
 # The directory to store reports will be created automically when rendering if it does not exist
-reportDir = paste0(workDir, "output/reports/pp_", pp) 
+reportDir = paste0(workDir, "reports/pp_", pp) 
 
 # STEP 2: SPECIFY YOUR EXPERIMENT PARAMETERS. (NON-OPTIONAL)
 # Make sure to specify all the parameters necessary!
