@@ -1,39 +1,47 @@
-#' ---
-#' title: Tobii TX300 Eyegaze Data Preprocessing
-#' author: Leon Fonville
-#' date: '`r format(Sys.Date(), "%B %d, %Y")`'
-#' output: 
-#'    html_document:
-#'      keep_md: true
-#'      toc: true
-#'      toc_float: 
-#'          collapsed: true
-#'      code_folding: hide
-#'      self_contained: true
-#' ---
-#' 
-#' # Introduction
-#'This document reports a series of preprocessing steps used to classify eyegaze
-#'data as fixations or saccades. The chosen processing steps are motivated by
-#'selected reading from the literature, some software packages, and available
-#'information on processing steps from Tobii. If I failed to cite any relevant
-#'sources please let me know!
-#'
-#' #Acknowledgements 
-#+loadLib, echo=FALSE, message=FALSE, warning=FALSE
-#' This document makes use of the dplyr, ggplot, and cowplot packages.
-#' Many of the preprocessing steps are inspired by the Tobii documentation by 
-#' [Olsen, 2012](https://www.tobiipro.com/siteassets/tobii-pro/learn-and-support/analyze/how-do-we-classify-eye-movements/tobii-pro-i-vt-fixation-filter.pdf/?v=2012)
-#' The eyegaze velocity thresholding is based on work by [Mould et al., 2012](https://www.sciencedirect.com/science/article/pii/S0042698911004214) 
-#' as well as the GazePath package by [van RensWoude et al., 2017](https://link.springer.com/article/10.3758%2Fs13428-017-0909-3).
+---
+title: Tobii TX300 Eyegaze Data Preprocessing
+author: Leon Fonville
+date: 'December 05, 2018'
+output: 
+   html_document:
+     keep_md: true
+     toc: true
+     toc_float: 
+         collapsed: true
+     code_folding: hide
+     self_contained: true
+---
 
+# Introduction
+This document reports a series of preprocessing steps used to classify eyegaze
+data as fixations or saccades. The chosen processing steps are motivated by
+selected reading from the literature, some software packages, and available
+information on processing steps from Tobii. If I failed to cite any relevant
+sources please let me know!
+
+#Acknowledgements 
+
+
+
+This document makes use of the dplyr, ggplot, and cowplot packages.
+Many of the preprocessing steps are inspired by the Tobii documentation by 
+[Olsen, 2012](https://www.tobiipro.com/siteassets/tobii-pro/learn-and-support/analyze/how-do-we-classify-eye-movements/tobii-pro-i-vt-fixation-filter.pdf/?v=2012)
+The eyegaze velocity thresholding is based on work by [Mould et al., 2012](https://www.sciencedirect.com/science/article/pii/S0042698911004214) 
+as well as the GazePath package by [van RensWoude et al., 2017](https://link.springer.com/article/10.3758%2Fs13428-017-0909-3).
+
+
+```r
 #load libraries
 library(dplyr)
 library(ggplot2)
 library(cowplot)
-#'
-#' # Summary
-#+prepSum
+```
+
+
+# Summary
+
+
+```r
 #Some housekeeping for the summary table
 nTrials = unique(input$trialIdx)
 runIdx = unique(input$runIdx)
@@ -47,20 +55,26 @@ if (unique(input$trialCode==1) | unique(input$trialCode==2)){trialType="Percepti
 subheader <- "### Run %d Trial number %d
 
 "
-#'
-#'  |                   |                        |
-#'  |:------------------|-----------------------:|
-#'  | Participant ID:   | `r unique(input$ppID)` |
-#'  | Experiment Run:   | `r runIdx`             | 
-#'  | Number of Trials: | `r length(nTrials)`    | 
-#'  | Stimulus:         | `r stimType`           | 
-#'  | Trial:            | `r trialType`          | 
-#'  
+```
 
-#' # Remove invalid data
-#' We'll average the eyegaze position across both eyes. If no valid data is available for one eye, the data from the other eye will be used. If both eyes contain invalid data it will be excluded.
-#+avgEye, results = "asis", dpi = 200, fig.height=1, fig.width=8,echo=FALSE, message=FALSE, warning=FALSE
-#'
+
+ |                   |                        |
+ |:------------------|-----------------------:|
+ | Participant ID:   | 999 |
+ | Experiment Run:   | 1             | 
+ | Number of Trials: | 4    | 
+ | Stimulus:         | Analog Clock           | 
+ | Trial:            | Imagery Trial          | 
+ 
+# Remove invalid data
+We'll average the eyegaze position across both eyes. If no valid data is available for one eye, the data from the other eye will be used. If both eyes contain invalid data it will be excluded.
+
+
+
+
+
+
+```r
 #Calculate an average of eyegaze position across eyes when valid data is available
 averageEye.Fun <- function(df){
   # Find left and right eye columns
@@ -114,13 +128,19 @@ averageEye.Fun <- function(df){
   return(df)
 }
 input <- averageEye.Fun(input)
-#'
-#' Data contains `r (sum(is.na(input$X)) + sum(is.na(input$Y)))/2` invalid datapoints (`r round((((sum(is.na(input$X)) + sum(is.na(input$Y)))/2)/dim(input)[1])*100, digits = 2)`%).
-#'
-#' # Median Filtering
-#' A sliding window with a windowlength of 3 frames was applied across the eyegaze data and each datapoint was replaced by the median value of those 3 frames.
-#' The smoothed data is shown below in black, with the original data points in red.
-#+smoothMedian, message=FALSE, warning=FALSE
+```
+
+![](C:/Users/leonf/Dropbox/1.dataviz/eyetracking-analysis/reports/pp_999/pp999-run1-stim3-preproc_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
+
+
+Data contains 119 invalid datapoints (8.29%).
+
+# Median Filtering
+A sliding window with a windowlength of 3 frames was applied across the eyegaze data and each datapoint was replaced by the median value of those 3 frames.
+The smoothed data is shown below in black, with the original data points in red.
+
+
+```r
 medianFilter.Fun <- function(df){
   # First, identify gaps in recordings and append eyegaze vectors accordingly
   # This is meant to identify missing frames and assumes there's not a lot of
@@ -168,32 +188,34 @@ medianFilter.Fun <- function(df){
   return(df)
 }
 input <- medianFilter.Fun(input)
-#'
-#+plotMedian, results = "asis", fig.width=8, fig.height=6,echo=FALSE, message=FALSE, warning=FALSE
-for (i in 1:4) {
-  # Overlay the filtered data on the raw data points for inspection
-  current <- nTrials[i]
-  cat(sprintf(subheader, runIdx, current))
-  xPlot <- ggplot(input %>% filter(trialIdx==current)) + 
-    geom_point(aes(x = frameTime, y = X, colour = "red"), show.legend=FALSE) +
-    geom_line(aes(x = frameTime, y = Xf), size = 1, alpha=0.8) +
-    labs(x = "", y = "X-axis") +
-    theme_bw()
-  yPlot <- ggplot(input %>% filter(trialIdx==current)) + 
-    geom_point(aes(x = frameTime, y = Y, colour = "red"), show.legend=FALSE) +
-    geom_line(aes(x = frameTime, y = Yf), size = 1, alpha=0.8) +
-    labs(x = "Time elapsed", y = "Y-axis") +
-    theme_bw()
-  xyPlot <- plot_grid(xPlot, yPlot, ncol = 1, align = "v")
-  plot(xyPlot)
-  cat('\n\n')
-}
-#'
-#' # Velocity Thresholding
-#' We will calculate the velocity at each frame as the distance between the preceding and subsequent datapoint converted into an angle. 
-#' The Euclidean distance between points is calculated in millimeters and is then converted to a visual angle using the recorded distance from the screen. 
-#' The velocity is reported in degrees per second. 
-#+getAngle
+```
+
+
+
+### Run 1 Trial number 6
+
+![](C:/Users/leonf/Dropbox/1.dataviz/eyetracking-analysis/reports/pp_999/pp999-run1-stim3-preproc_files/figure-html/plotMedian-1.png)<!-- -->
+
+### Run 1 Trial number 13
+
+![](C:/Users/leonf/Dropbox/1.dataviz/eyetracking-analysis/reports/pp_999/pp999-run1-stim3-preproc_files/figure-html/plotMedian-2.png)<!-- -->
+
+### Run 1 Trial number 20
+
+![](C:/Users/leonf/Dropbox/1.dataviz/eyetracking-analysis/reports/pp_999/pp999-run1-stim3-preproc_files/figure-html/plotMedian-3.png)<!-- -->
+
+### Run 1 Trial number 31
+
+![](C:/Users/leonf/Dropbox/1.dataviz/eyetracking-analysis/reports/pp_999/pp999-run1-stim3-preproc_files/figure-html/plotMedian-4.png)<!-- -->
+
+
+# Velocity Thresholding
+We will calculate the velocity at each frame as the distance between the preceding and subsequent datapoint converted into an angle. 
+The Euclidean distance between points is calculated in millimeters and is then converted to a visual angle using the recorded distance from the screen. 
+The velocity is reported in degrees per second. 
+
+
+```r
 angleV.Fun <- function(df, scr_x, scr_y){
   # Adjust the gaze points to reflect the widescreen used for recording
   # Calculate the Euclidean distance and velocity using the adjusted coordinates and
@@ -217,10 +239,14 @@ angleV.Fun <- function(df, scr_x, scr_y){
   return(df)
 }
 input <- angleV.Fun(input, scr_x, scr_y)
-#' ## Find Optimal Velocity Threshold
-#' The next step is to find the speed threshold that optimally separates the distribution of saccades from the distribution of fixational eye movements and noise. 
-#' We'll be using local regression models to find the optimum speed threshold and using cross validation to optimise the regression model.
-#+fitModel, fig.width=6, fig.height=4
+```
+
+## Find Optimal Velocity Threshold
+The next step is to find the speed threshold that optimally separates the distribution of saccades from the distribution of fixational eye movements and noise. 
+We'll be using local regression models to find the optimum speed threshold and using cross validation to optimise the regression model.
+
+
+```r
 #Requires Angular Velocity (AV) and sampling rate (in Hz) as input
 optThresh.Fun <- function(lmV, Hz){
   # Make dataframe of local maxima
@@ -294,81 +320,58 @@ optThresh.Fun <- function(lmV, Hz){
 }
 optParam <- input %>% filter(lMax==1) %>% pull(AV) %>% optThresh.Fun(., 120)
 optParam$plot #plot the data
-#'
-#' The observed frequency of local maxima exceeding the speed threshold is depicted in grey. 
-#' The dashed line depicts the null distribution and the dotted blue line represents the gap between the null and the observed distributions.
-#' The red line is a smoothed fit of the gap between the two and the black bar represents the optimal speed threshold for
-#' distinguishing fixations from saccades. 
-#' 
-#' The optimal speed threshold for distinguishing fixations from saccades was `r round(optParam$value, digits = 2)`
-#' 
-#' ## Optimal Velocity Threshold
-#+plotThresh, results = "asis", fig.width=8, fig.height=6,echo=FALSE, message=FALSE, warning=FALSE
-# Label points as fixations or saccades using the optimal velocity threshold
-input <- input %>% mutate(fixation = ifelse(AV < optParam$value, 1, 0)) 
-# Temporarily remove NAs to classify clusters
-naIdx <- which(is.na(input$AV))
-input$fixation[naIdx] = 0
-input <- input %>% mutate(cluster = ifelse(fixation==1, cumsum(1-fixation)+1,0))
-input$fixation[naIdx] = NA
-# Arrange the clusters into ascending values
-input <- input %>% group_by(trialIdx) %>%
-  mutate(cluster = plyr::mapvalues(cluster, unique(sort(cluster)), 0:(length(unique(cluster))-1)))
-# Plot the thresholded timecourse
-start = round(min(input$frameTime), digits = 0)
-end = round(max(input$frameTime), digits = 0)
-timeSeq = breaks = seq(from = start, to = end, by = end/10)
+```
 
-for (i in 1:4) {
-  current <- nTrials[i]
-  cat(sprintf(subheader, runIdx, current))
-  xPlot <- ggplot(input %>% filter(trialIdx==current)) + 
-    geom_line(aes(x = frameTime, y = Xf, 
-                  colour = fixation, alpha = fixation), size = 1) +
-    labs(x = "", y = "X-axis") +
-    scale_x_continuous(breaks = timeSeq) +
-    scale_alpha_continuous(range = c(1,1), na.value = 0) +
-    theme_bw() + theme(legend.position = "none", 
-                       panel.grid.minor.x = element_blank())
-  yPlot <- ggplot(input %>% filter(trialIdx==current)) + 
-    geom_line(aes(x = frameTime, y = Yf, colour = fixation, alpha = fixation), size = 1) +
-    labs(x = "", y = "Y-axis") +
-    scale_x_continuous(breaks = timeSeq) +
-    scale_alpha_continuous(range = c(1,1), na.value = 0) +
-    theme_bw() + theme(legend.position = "none")
-  avPlot <- ggplot(input %>% filter(trialIdx==current)) + 
-    geom_line(aes(x=frameTime, y = AV)) +
-    labs(x = "Time elapsed", y = "Angular Velocity") + 
-    scale_x_continuous(breaks = timeSeq) +
-    geom_hline(yintercept = optParam$value, color = "red", linetype = "dashed") +
-    theme_bw() + theme(legend.position = "none")
-  xyvPlot <- plot_grid(xPlot, yPlot, avPlot, ncol = 1, align = "v")
-  plot(xyvPlot)
-cat('\n\n')
-}
-#'
-#' # Eyegaze Classification
-#+plotCluster, results = "asis", fig.width=8, fig.height=6,echo=FALSE, message=FALSE, warning=FALSE
-# Filter the data to remove fixations shorter than 100ms
-clusterL <- input %>% filter(cluster>0) %>% group_by(trialIdx, cluster) %>% summarise(rleL = n())
-shortCL <- which(clusterL$rleL<(Hz/10))
-shortIdx <- which(interaction(input$trialIdx, input$cluster) %in% interaction(clusterL$trialIdx[shortCL], clusterL$cluster[shortCL]))
-input$cluster[shortIdx] = NA
-clusterSeq = seq(from = start, to = end, by = end/(end*2))
-# Plot the final fixations
-for (i in 1:4) {
-  current <- nTrials[i]
-  cat(sprintf(subheader, runIdx, current))
-  xyFSplot <- ggplot(input %>% filter(trialIdx==current & !is.na(fixation))) +
-    geom_point(aes(x = Xf, y = Yf, size = AV, colour=frameTime),alpha = 0.5) +
-    geom_path(aes(x = Xf, y = Yf),alpha = 0.1) +
-    scale_x_continuous(breaks = seq(from=0, to = 0.9, by = 0.1), limits = c(0,1), expand = c(0,0)) +
-    scale_y_continuous(breaks = seq(from=0, to = 0.9, by = 0.1), limits = c(0,1), expand = c(0,0)) +
-    facet_grid(fixation ~ .,
-               labeller = labeller(fixation = c("0" = "saccades", "1" = "fixations"))) +
-    labs(x = "X-Axis", y = "Y-axis") + theme_bw() + guides(size = FALSE) +
-    scale_colour_gradientn(name = "time elapsed", breaks = clusterSeq, labels = as.character(clusterSeq) ,colours=rainbow(4)) +
-    theme(legend.key.height = unit(0.5,'inch'))
-  plot(xyFSplot)
-  cat('\n\n')
-}
+![](C:/Users/leonf/Dropbox/1.dataviz/eyetracking-analysis/reports/pp_999/pp999-run1-stim3-preproc_files/figure-html/fitModel-1.png)<!-- -->
+
+
+The observed frequency of local maxima exceeding the speed threshold is depicted in grey. 
+The dashed line depicts the null distribution and the dotted blue line represents the gap between the null and the observed distributions.
+The red line is a smoothed fit of the gap between the two and the black bar represents the optimal speed threshold for
+distinguishing fixations from saccades. 
+
+The optimal speed threshold for distinguishing fixations from saccades was 22.47
+
+## Optimal Velocity Threshold
+
+### Run 1 Trial number 6
+
+![](C:/Users/leonf/Dropbox/1.dataviz/eyetracking-analysis/reports/pp_999/pp999-run1-stim3-preproc_files/figure-html/plotThresh-1.png)<!-- -->
+
+### Run 1 Trial number 13
+
+![](C:/Users/leonf/Dropbox/1.dataviz/eyetracking-analysis/reports/pp_999/pp999-run1-stim3-preproc_files/figure-html/plotThresh-2.png)<!-- -->
+
+### Run 1 Trial number 20
+
+![](C:/Users/leonf/Dropbox/1.dataviz/eyetracking-analysis/reports/pp_999/pp999-run1-stim3-preproc_files/figure-html/plotThresh-3.png)<!-- -->
+
+### Run 1 Trial number 31
+
+![](C:/Users/leonf/Dropbox/1.dataviz/eyetracking-analysis/reports/pp_999/pp999-run1-stim3-preproc_files/figure-html/plotThresh-4.png)<!-- -->
+
+
+# Eyegaze Classification
+
+### Run 1 Trial number 6
+
+![](C:/Users/leonf/Dropbox/1.dataviz/eyetracking-analysis/reports/pp_999/pp999-run1-stim3-preproc_files/figure-html/plotCluster-1.png)<!-- -->
+
+### Run 1 Trial number 13
+
+![](C:/Users/leonf/Dropbox/1.dataviz/eyetracking-analysis/reports/pp_999/pp999-run1-stim3-preproc_files/figure-html/plotCluster-2.png)<!-- -->
+
+### Run 1 Trial number 20
+
+![](C:/Users/leonf/Dropbox/1.dataviz/eyetracking-analysis/reports/pp_999/pp999-run1-stim3-preproc_files/figure-html/plotCluster-3.png)<!-- -->
+
+### Run 1 Trial number 31
+
+![](C:/Users/leonf/Dropbox/1.dataviz/eyetracking-analysis/reports/pp_999/pp999-run1-stim3-preproc_files/figure-html/plotCluster-4.png)<!-- -->
+
+
+---
+title: "preproc.R"
+author: "leonf"
+date: "Wed Dec 05 14:06:57 2018"
+---

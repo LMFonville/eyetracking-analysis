@@ -16,7 +16,7 @@ library(dplyr)
 library(rmarkdown)
 # Let's load the datafile which contains all the trials
 if (!dir.exists("C:/Users/fonvill/")){
-  workDir <-  "C:/Users/leonf/Dropbox/1.dataviz/rEyetracking/git/"
+  workDir <-  "C:/Users/leonf/Dropbox/1.dataviz/eyetracking-analysis/"
 } else{
   workDir <-  "E:/1.Work/visual-imagery-clocktask/"
   
@@ -26,7 +26,7 @@ rawDF <- read.csv(paste0(workDir,"rawdata/", "exampleData.csv"),
 pp = unique(rawDF$ppID)
 
 # If directory to store preprocessed data does not exist make the output directory
-preprocDir = paste0(workDir, "output/preproc/pp_", pp, "/")
+preprocDir = paste0(workDir, "preproc/pp_", pp, "/")
 if (!dir.exists(preprocDir)){
   dir.create(preprocDir)
 }
