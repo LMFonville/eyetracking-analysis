@@ -6,6 +6,8 @@ The main motivation was to make the processing steps easier to follow by visuali
 
 ## Report examples
 
+These are examples from my data with problematic features to showcase how the pipeline deals with both valid and invalid data.
+
 Use CTRL-click to open in a new tab! 
 
 * [Example 1](http://htmlpreview.github.io/?https://github.com/LMFonville/eyetracking-analysis/blob/master/reports/pp_999/pp999-run1-stim1-preproc.html)
