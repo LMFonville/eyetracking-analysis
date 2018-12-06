@@ -1,6 +1,6 @@
 ## Introduction
 
-This repository describes a series of processing steps that I use to analyse eye-tracking data. These can be run directly from R and will produce a csv output of the preprocessed data and will also render reports as html files for quality control. There are several R packages needed to run this pipeline (currently: dplyr, ggplot2, cowplot, markdown). Below are links of examples of the output as an html report with figures and code.
+This repository describes a series of processing steps that I use to analyse eye-tracking data. These can be run directly from R and will produce a csv output of the preprocessed data and will also render reports as html files for quality control. There are several R packages needed to run this pipeline (currently: dplyr, ggplot2, cowplot, markdown). Below are links of examples of the output as an html report with figures and code. I have only used this with my Tobii acquired eyegaze data.
 
 The main motivation was to make the processing steps easier to follow by visualising what is happening and providing a direct reference to the underlying code in the report. 
 
