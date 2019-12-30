@@ -6,7 +6,7 @@ This data was quite messy and required downsampling, smoothing, and clipping to 
 
 ## Report examples
 
-These are example runthroughs from a pilot scan.
+These are example runthroughs from a pilot scan. The html previews don't have the same functionality as the reports (code folding, table of contents, layout).
 
 Use CTRL-click to open in a new tab! 
 
@@ -16,9 +16,9 @@ Preprocessing
 * [Example 2](http://htmlpreview.github.io/?https://github.com/LMFonville/eyetracking-analysis/blob/master/preproc/pilot/report/pilot-run1-trialtype2-preproc.html)
 
 Gazepath
-* [Example 1](http://htmlpreview.github.io/?https://github.com/LMFonville/eyetracking-analysis/blob/master/gazepath/pilot/report/pilot-run1-trialtype1-gazepath.html)
+* [Example 1](http://htmlpreview.github.io/?https://github.com/LMFonville/eyetracking-analysis/blob/master/gazepath/pilot/report/pilot_stim1_run1-gazepath.html)
 
-* [Example 2](http://htmlpreview.github.io/?https://github.com/LMFonville/eyetracking-analysis/blob/master/gazepath/pilot/report/pilot-run1-trialtype2-gazepath.html)
+* [Example 2](http://htmlpreview.github.io/?https://github.com/LMFonville/eyetracking-analysis/blob/master/gazepath/pilot/report/pilot_stim3_run1-gazepath.html)
 
 Similarity
 * [Example 1](http://htmlpreview.github.io/?https://github.com/LMFonville/eyetracking-analysis/blob/master/similarity/pilot/report/pilot-allRuns-stimpair_12-Rv_corr.html)
